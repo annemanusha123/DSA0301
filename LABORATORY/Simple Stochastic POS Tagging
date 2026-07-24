@@ -1,0 +1,8 @@
+sentence = ["I", "eat", "apple"]
+probability = {
+    "I": "PRON",
+    "eat": "VERB",
+    "apple": "NOUN"
+}
+for word in sentence:
+    print(word, "->", probability.get(word, "UNKNOWN"))
