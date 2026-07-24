@@ -1,0 +1,9 @@
+sentence = [("I", "NN"), ("run", "NN"), ("fast", "RB")]
+new_tags = []
+for word, tag in sentence:
+    if word == "I":
+        tag = "PRON"
+    elif word == "run":
+        tag = "VERB"
+    new_tags.append((word, tag))
+print(new_tags)
