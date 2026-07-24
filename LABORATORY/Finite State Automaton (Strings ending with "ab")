@@ -1,0 +1,7 @@
+def fsa(string):
+    if string.endswith("ab"):
+        return "Accepted"
+    else:
+        return "Rejected"
+s = input("Enter string: ")
+print(fsa(s))
