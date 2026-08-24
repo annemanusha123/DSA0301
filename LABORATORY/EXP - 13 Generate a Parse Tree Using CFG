@@ -1,0 +1,42 @@
+# Parse Tree Generation
+grammar = {
+    'S': [['NP', 'VP']],
+    'NP': [['Det', 'N']],
+    'VP': [['V', 'NP']],
+    'Det': [['the'], ['a']],
+    'N': [['cat'], ['dog']],
+    'V': [['sees'], ['likes']]
+}
+def build_tree(symbol, words, pos):
+    if symbol not in grammar:
+        if pos < len(words) and symbol == words[pos]:
+            return (symbol, pos + 1)
+        return None
+    for rule in grammar[symbol]:
+        children = []
+        current = pos
+        success = True
+        for sym in rule:
+            result = build_tree(sym, words, current)
+            if result is None:
+                success = False
+                break
+            tree, current = result
+            children.append(tree)
+        if success:
+            return ((symbol, children), current)
+    return None
+def print_tree(tree, level=0):
+    symbol = tree[0]
+    print("  " * level + symbol)
+
+    if len(tree) > 1:
+        for child in tree[1]:
+            print_tree(child, level + 1)
+sentence = input("Enter sentence: ").lower().split()
+result = build_tree('S', sentence, 0)
+if result and result[1] == len(sentence):
+    print("\nParse Tree:")
+    print_tree(result[0])
+else:
+    print("No parse tree found.")
