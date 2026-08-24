@@ -1,0 +1,21 @@
+import re
+def parse_fopc(expression):
+    expression = expression.replace(" ", "")
+    pattern = r'^(forall|exists)\(([A-Za-z]),([A-Za-z]+)\(([A-Za-z])\)\)$'
+    match = re.match(pattern, expression)
+    if match:
+        quantifier = match.group(1)
+        variable = match.group(2)
+        predicate = match.group(3)
+        argument = match.group(4)
+        if variable == argument:
+            print("Valid FOPC expression")
+            print("Quantifier:", quantifier)
+            print("Variable:", variable)
+            print("Predicate:", predicate)
+        else:
+            print("Invalid variable usage.")
+    else:
+        print("Invalid FOPC expression.")
+expression = input("Enter FOPC expression: ")
+parse_fopc(expression)
