@@ -1,0 +1,61 @@
+# Simple Earley Parser
+grammar = {
+    'S': [['NP', 'VP']],
+    'NP': [['Det', 'N']],
+    'VP': [['V', 'NP']],
+    'Det': [['the'], ['a']],
+    'N': [['cat'], ['dog']],
+    'V': [['sees'], ['likes']]
+}
+def earley_parse(words):
+    n = len(words)
+    chart = [[] for _ in range(n + 1)]
+    # (lhs, rhs, dot, start)
+    chart[0].append(('S', ['NP', 'VP'], 0, 0))
+    for i in range(n + 1):
+        changed = True
+        while changed:
+            changed = False
+            for item in chart[i].copy():
+                lhs, rhs, dot, start = item
+                # Prediction
+                if dot < len(rhs) and rhs[dot] in grammar:
+                    next_symbol = rhs[dot]
+                    for rule in grammar[next_symbol]:
+                        new_item = (next_symbol, rule, 0, i)
+                        if new_item not in chart[i]:
+                            chart[i].append(new_item)
+                            changed = True
+                # Completion
+                elif dot == len(rhs):
+                    for old in chart[start].copy():
+                        old_lhs, old_rhs, old_dot, old_start = old
+                        if (old_dot < len(old_rhs) and
+                            old_rhs[old_dot] == lhs):
+                            new_item = (
+                                old_lhs,
+                                old_rhs,
+                                old_dot + 1,
+                                old_start
+                            )
+                            if new_item not in chart[i]:
+                                chart[i].append(new_item)
+                                changed = True
+
+        # Scanning
+        if i < n:
+            for item in chart[i].copy():
+                lhs, rhs, dot, start = item
+                if dot < len(rhs):
+                    symbol = rhs[dot]
+                    if symbol not in grammar and symbol == words[i]:
+                        new_item = (lhs, rhs, dot + 1, start)
+                        if new_item not in chart[i + 1]:
+                            chart[i + 1].append(new_item)
+    final_item = ('S', ['NP', 'VP'], 2, 0)
+    return final_item in chart[n]
+sentence = input("Enter sentence: ").lower().split()
+if earley_parse(sentence):
+    print("Sentence accepted by Earley Parser.")
+else:
+    print("Sentence rejected by Earley Parser.")
