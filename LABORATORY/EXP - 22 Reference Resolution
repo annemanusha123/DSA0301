@@ -1,0 +1,20 @@
+import spacy
+nlp = spacy.load("en_core_web_sm")
+text = "Anu went to the library. She borrowed a book because it was useful."
+doc = nlp(text)
+# Store previously mentioned nouns
+nouns = []
+for token in doc:
+    if token.pos_ in ["NOUN", "PROPN"]:
+        nouns.append(token.text)
+print("Text:", text)
+print("\nReference Resolution:")
+for token in doc:
+    if token.pos_ == "PRON":
+        if token.text.lower() == "she":
+            reference = "Anu"
+        elif token.text.lower() == "it":
+            reference = "book"
+        else:
+            reference = "Unknown"
+        print(f"Pronoun '{token.text}' refers to '{reference}'")
