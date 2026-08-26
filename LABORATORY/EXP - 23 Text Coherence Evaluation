@@ -1,0 +1,33 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+text = """
+Artificial intelligence is used in many applications.
+Machine learning is an important part of artificial intelligence.
+Machine learning algorithms can analyze large amounts of data.
+These algorithms are useful in healthcare and education.
+"""
+sentences = [s.strip() for s in text.strip().split(".") if s.strip()]
+vectorizer = TfidfVectorizer()
+vectors = vectorizer.fit_transform(sentences)
+similarities = []
+for i in range(len(sentences) - 1):
+    score = cosine_similarity(
+        vectors[i],
+        vectors[i + 1]
+    )[0][0]
+    similarities.append(score)
+average_score = sum(similarities) / len(similarities)
+print("Text Coherence Evaluation")
+print("--------------------------")
+for i, score in enumerate(similarities):
+    print(
+        f"Similarity between sentence {i+1} and {i+2}: "
+        f"{score:.2f}"
+    )
+print(f"\nAverage Coherence Score: {average_score:.2f}")
+if average_score >= 0.5:
+    print("Result: Highly Coherent")
+elif average_score >= 0.2:
+    print("Result: Moderately Coherent")
+else:
+    print("Result: Low Coherence")
